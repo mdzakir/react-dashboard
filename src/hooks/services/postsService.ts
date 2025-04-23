@@ -1,16 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useRandomUserId } from "../../context/UserContext";
+import { getClient } from "../../services/client";
+import { UserPost } from "../../@types/user";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const fetchUserPosts = async (userId: number): Promise<UserPost[]> => {
+  const client = await getClient();
+  const { data } = await client(`/users/${userId}/posts`);
+  return data;
+};
 
 export const useUserPosts = () => {
   const userId = useRandomUserId();
   return useQuery({
     queryKey: ["posts", userId],
-    queryFn: async () => {
-      const res = await axios.get(`${API_BASE_URL}/users/${userId}/posts`);
-      return res.data;
-    },
+    queryFn: () => fetchUserPosts(userId),
   });
 };

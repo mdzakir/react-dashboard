@@ -1,13 +1,13 @@
 import { Layout } from "antd";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import styled from "styled-components";
 import Sidebar from "./components/Sidebar";
+import MainLayout from "./MainLayout";
 import Blogs from "./pages/Blogs";
 import Dashboard from "./pages/Dashboard";
-import MainLayout from "./MainLayout";
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 const AppWrapper = styled(Layout)`
   height: 100vh;
@@ -18,11 +18,12 @@ function App() {
     <AppWrapper>
       <Sidebar />
       <MainLayout>
-        <Header style={{ background: "#fff", padding: 0 }} />
         <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/blogs" element={<Blogs />} />
+            {/* <Route path="/posts/:postId" element={<BlogDetails />} /> */}
           </Routes>
         </Content>
       </MainLayout>
