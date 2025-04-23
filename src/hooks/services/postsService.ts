@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useRandomUserId } from "../../context/UserContext";
 import { getClient } from "../../services/client";
-import { UserPost } from "../../@types/user";
+import { UserPost } from "../../@types/post";
 
 const fetchUserPosts = async (userId: number): Promise<UserPost[]> => {
   const client = await getClient();

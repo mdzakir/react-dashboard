@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { List, Button, Space, Typography, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { useUserPosts } from "../hooks/services/postsService";
 import { formattedDate } from "../utils";
+import { UserPost } from "../@types/post";
+import EditPostModal from "../components/EditPostModal";
+import { useQueryClient } from "@tanstack/react-query";
 
 const { Title, Paragraph } = Typography;
 
@@ -29,6 +32,15 @@ const BlogContent = styled.div`
 const Blogs: React.FC = () => {
   const { data: posts, isLoading, isError } = useUserPosts();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const [selectedPost, setSelectedPost] = useState<UserPost | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  const handleEditClick = (post: UserPost) => {
+    setSelectedPost(post);
+    setModalOpen(true);
+  };
 
   if (isLoading) return <Spin />;
   if (isError) return <div>Something went wrong while fetching posts.</div>;
@@ -40,7 +52,7 @@ const Blogs: React.FC = () => {
         dataSource={posts}
         renderItem={(post) => (
           <BlogItem key={post?.id}>
-            <Thumbnail src={`https://i.pravatar.cc/300`} alt="Blog thumbnail" />
+            <Thumbnail src={"https://picsum.photos/200"} alt="Blog thumbnail" />
             <BlogContent>
               <div
                 style={{
@@ -75,9 +87,22 @@ const Blogs: React.FC = () => {
                   Read More
                 </Button>
               </Space>
+              <Space size="small">
+                <Button type="primary" onClick={() => handleEditClick(post)}>
+                  Edit
+                </Button>
+              </Space>
             </BlogContent>
           </BlogItem>
         )}
+      />
+      <EditPostModal
+        post={selectedPost}
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ["posts"] });
+        }}
       />
     </div>
   );

@@ -10,7 +10,7 @@ const AppLayout = styled(Layout)`
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <AppLayout>
-      <Layout>
+      <Layout style={{ minHeight: "100%" }}>
         <Header style={{ background: "#fff", padding: 0 }} />
         <Content style={{ margin: 20 }}>{children}</Content>
       </Layout>
