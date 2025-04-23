@@ -1,31 +1,56 @@
-import { Layout, Menu, Avatar } from "antd";
 import {
   AppstoreOutlined,
-  FileTextOutlined,
-  BookOutlined,
-  QuestionCircleOutlined,
   BarChartOutlined,
+  BookOutlined,
+  FileTextOutlined,
+  QuestionCircleOutlined,
 } from "@ant-design/icons";
-import styled from "styled-components";
+import { Avatar, Button, Layout, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
+import styled from "styled-components";
+import { useUser } from "../hooks/services/userService";
 
 const { Sider } = Layout;
 
 const SidebarWrapper = styled(Sider)`
   min-height: 100vh;
+  background: #fff;
 `;
 
 const Sidebar = () => {
   const location = useLocation();
+  const { data, isLoading } = useUser();
 
   return (
-    <SidebarWrapper width={250} theme="light">
+    <SidebarWrapper width={250}>
       <div style={{ padding: "24px", textAlign: "center" }}>
-        <Avatar size={64} src="/default-avatar.png" />
-        <div style={{ marginTop: "12px", fontWeight: "bold" }}>Allie Simon</div>
-        <div style={{ color: "#888", fontSize: 12 }}>
-          Qatar Development Bank
+        <Avatar
+          size={64}
+          src={
+            isLoading
+              ? `https://placehold.co/62x62?text=Loading...`
+              : `https://randomuser.me/api/portraits/women/${data?.id}.jpg`
+          }
+        />
+        <div
+          style={{
+            marginTop: "12px",
+            color: "#888",
+          }}
+        >
+          Hello
         </div>
+        <div style={{ fontWeight: "bold" }}>{data?.name}</div>
+        <Button
+          type="primary"
+          style={{
+            marginTop: "12px",
+            width: "90%",
+          }}
+        >
+          <BarChartOutlined style={{ marginRight: "8px" }} />
+          <Link to="/profile">Live Metrics</Link>
+        </Button>
       </div>
       <Menu
         mode="inline"

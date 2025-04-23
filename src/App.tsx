@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Sidebar from "./components/Sidebar";
 import Blogs from "./pages/Blogs";
 import Dashboard from "./pages/Dashboard";
+import MainLayout from "./MainLayout";
 
 const { Header, Content } = Layout;
 
@@ -16,7 +17,7 @@ function App() {
   return (
     <AppWrapper>
       <Sidebar />
-      <Layout>
+      <MainLayout>
         <Header style={{ background: "#fff", padding: 0 }} />
         <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
           <Routes>
@@ -24,7 +25,7 @@ function App() {
             <Route path="/blogs" element={<Blogs />} />
           </Routes>
         </Content>
-      </Layout>
+      </MainLayout>
     </AppWrapper>
   );
 }
