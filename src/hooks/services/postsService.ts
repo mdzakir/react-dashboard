@@ -6,7 +6,7 @@ import { UserPost } from "../../@types/post";
 const fetchUserPosts = async (userId: number): Promise<UserPost[]> => {
   const client = await getClient();
   const { data } = await client(`/users/${userId}/posts`);
-  return data;
+  return data.map((post: UserPost) => ({ ...post, imgUrl: `https://picsum.photos/id/${post?.id}/200/120` }));
 };
 
 export const useUserPosts = () => {

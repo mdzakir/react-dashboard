@@ -3,4 +3,5 @@ export interface UserPost {
     userId: number;
     title: number;
     body: number;
+    imgUrl?: string;
 }

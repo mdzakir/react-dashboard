@@ -1,12 +1,14 @@
+import { EditOutlined } from "@ant-design/icons";
+import { ConfigProvider, Pagination } from "antd";
+import { useQueryClient } from "@tanstack/react-query";
+import { Button, List, Space, Spin, Typography } from "antd";
 import React, { useState } from "react";
-import { List, Button, Space, Typography, Spin } from "antd";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useUserPosts } from "../hooks/services/postsService";
-import { formattedDate } from "../utils";
 import { UserPost } from "../@types/post";
 import EditPostModal from "../components/EditPostModal";
-import { useQueryClient } from "@tanstack/react-query";
+import { useUserPosts } from "../hooks/services/postsService";
+import { formattedDate } from "../utils";
 
 const { Title, Paragraph } = Typography;
 
@@ -19,8 +21,8 @@ const BlogItem = styled.div`
 `;
 
 const Thumbnail = styled.img`
-  width: 80px;
-  height: 80px;
+  width: 200px;
+  height: 120px;
   object-fit: cover;
   border-radius: 8px;
 `;
@@ -37,6 +39,14 @@ const Blogs: React.FC = () => {
   const [selectedPost, setSelectedPost] = useState<UserPost | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 4;
+
+  const paginatedPosts = posts?.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
   const handleEditClick = (post: UserPost) => {
     setSelectedPost(post);
     setModalOpen(true);
@@ -49,10 +59,18 @@ const Blogs: React.FC = () => {
     <div>
       <Title level={2}>Blogs</Title>
       <List
-        dataSource={posts}
+        dataSource={paginatedPosts}
         renderItem={(post) => (
           <BlogItem key={post?.id}>
-            <Thumbnail src={"https://picsum.photos/200"} alt="Blog thumbnail" />
+            <Thumbnail
+              src={
+                isLoading
+                  ? `https://placehold.co/62x62?text=Loading...`
+                  : post?.imgUrl
+              }
+              loading="lazy"
+              alt="Blog thumbnail"
+            />
             <BlogContent>
               <div
                 style={{
@@ -89,13 +107,34 @@ const Blogs: React.FC = () => {
               </Space>
               <Space size="small">
                 <Button type="primary" onClick={() => handleEditClick(post)}>
-                  Edit
+                  <EditOutlined /> Edit
                 </Button>
               </Space>
             </BlogContent>
           </BlogItem>
         )}
       />
+      <ConfigProvider
+        theme={{
+          components: {
+            Pagination: {
+              itemActiveBg: "#1a2651",
+            },
+          },
+          token: {
+            colorPrimary: "#fff",
+          },
+        }}
+      >
+        <Pagination
+          align="center"
+          current={currentPage}
+          pageSize={pageSize}
+          total={posts?.length || 0}
+          onChange={(page) => setCurrentPage(page)}
+          style={{ marginTop: 16 }}
+        />
+      </ConfigProvider>
       <EditPostModal
         post={selectedPost}
         open={modalOpen}

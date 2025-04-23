@@ -6,6 +6,7 @@ import Sidebar from "./components/Sidebar";
 import MainLayout from "./MainLayout";
 import Blogs from "./pages/Blogs";
 import Dashboard from "./pages/Dashboard";
+import BlogDetail from "./pages/BlogDetail";
 
 const { Content } = Layout;
 
@@ -23,7 +24,7 @@ function App() {
             <Route path="/" element={<Navigate to="/dashboard" />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/blogs" element={<Blogs />} />
-            {/* <Route path="/posts/:postId" element={<BlogDetails />} /> */}
+            <Route path="/posts/:postId" element={<BlogDetail />} />
           </Routes>
         </Content>
       </MainLayout>
