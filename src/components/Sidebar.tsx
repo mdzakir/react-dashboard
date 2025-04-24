@@ -55,6 +55,7 @@ const Sidebar = () => {
         /> : null }
         <Button
           type="text"
+           data-testid="collapse-button"
           icon={collapsed ? <MenuUnfoldOutlined color="#fff" /> : <MenuFoldOutlined color="#fff" />}
           onClick={() => setCollapsed(!collapsed)}
           style={{
