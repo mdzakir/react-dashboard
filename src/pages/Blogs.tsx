@@ -1,8 +1,8 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { ConfigProvider, Pagination, Popconfirm } from "antd";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Button, List, Space, Spin, Typography } from "antd";
-import React, { useState } from "react";
+import { Tabs, Button, List, Space, Spin, Typography } from "antd";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { UserPost } from "../@types/post";
@@ -43,6 +43,7 @@ const Blogs: React.FC = () => {
   >(null);
 
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
 
   const mutation = useMutation({
     mutationFn: (postId: number) => deletePost(postId),
@@ -52,10 +53,25 @@ const Blogs: React.FC = () => {
     },
   });
 
+  const getFilteredPosts = () => {
+    if (!posts) return [];
+
+    switch (activeTab) {
+      case "latest":
+        return posts.slice(0, 3);
+      case "archived":
+        return posts.slice(-3);
+      default:
+        return posts;
+    }
+  };
+
+  const filteredPosts = getFilteredPosts();
+
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 4;
 
-  const paginatedPosts = posts?.slice(
+  const paginatedPosts = filteredPosts?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -84,12 +100,31 @@ const Blogs: React.FC = () => {
     setSelectedPostIdForDelete(null);
   };
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab]);
+
   if (isLoading) return <Spin />;
   if (isError) return <div>Something went wrong while fetching posts.</div>;
 
   return (
     <div>
       <Title level={2}>Blogs</Title>
+      <Tabs
+        style={{
+          fontWeight: "bold",
+        }}
+        defaultActiveKey="all"
+        onChange={(key) => {
+          setActiveTab(key);
+          setCurrentPage(1);
+        }}
+        items={[
+          { key: "all", label: "ALL POSTS" },
+          { key: "latest", label: "LATEST POSTS" },
+          { key: "archived", label: "ARCHIVED" },
+        ]}
+      />
       <List
         dataSource={paginatedPosts}
         renderItem={(post) => (
@@ -178,7 +213,7 @@ const Blogs: React.FC = () => {
           align="center"
           current={currentPage}
           pageSize={pageSize}
-          total={posts?.length || 0}
+          total={filteredPosts?.length || 0}
           onChange={(page) => setCurrentPage(page)}
           style={{ marginTop: 16 }}
         />

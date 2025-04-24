@@ -3,12 +3,15 @@ import {
   BarChartOutlined,
   BookOutlined,
   FileTextOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
   QuestionCircleOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Layout, Menu } from "antd";
+import { Avatar, Button, Layout, Image, Menu } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { useUser } from "../hooks/services/userService";
+import { useState } from "react";
 
 const { Sider } = Layout;
 
@@ -20,9 +23,48 @@ const SidebarWrapper = styled(Sider)`
 const Sidebar = () => {
   const location = useLocation();
   const { data, isLoading } = useUser();
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <SidebarWrapper width={250}>
+    <SidebarWrapper
+      width={250}
+      trigger={null}
+      collapsible
+      collapsed={collapsed}
+      onCollapse={setCollapsed}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          backgroundColor: "#397bf6",
+        }}
+      >
+       {!collapsed ? <Image
+          src={
+            "https://www.qdb.qa/-/media/images/project/qdb/icons/logo-colored.svg"
+          }
+          alt="post image"
+          style={{
+            margin: "auto",
+            height: "62px",
+            width: "100px",
+            paddingLeft: "16px",
+            filter: "brightness(0) invert(1)",
+          }}
+        /> : null }
+        <Button
+          type="text"
+          icon={collapsed ? <MenuUnfoldOutlined color="#fff" /> : <MenuFoldOutlined color="#fff" />}
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            fontSize: "16px",
+            width: 64,
+            height: 64,
+            color: '#fff'
+          }}
+        />
+      </div>
       <div style={{ padding: "24px", textAlign: "center" }}>
         <Avatar
           size={64}
