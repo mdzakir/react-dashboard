@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { ConfigProvider, Pagination, Popconfirm } from "antd";
+import { ConfigProvider, Layout, Pagination, Popconfirm } from "antd";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Tabs, Button, List, Space, Spin, Typography } from "antd";
 import React, { useEffect, useState } from "react";
@@ -9,7 +9,7 @@ import { UserPost } from "../@types/post";
 import EditPostModal from "../components/EditPostModal";
 import { deletePost, useUserPosts } from "../hooks/services/postsService";
 import { formattedDate } from "../utils";
-
+const { Content } = Layout;
 const { Title, Paragraph } = Typography;
 
 const BlogItem = styled.div`
@@ -109,123 +109,127 @@ const Blogs: React.FC = () => {
 
   return (
     <div>
-      <Title level={2}>Blogs</Title>
-      <Tabs
-        style={{
-          fontWeight: "bold",
-        }}
-        defaultActiveKey="all"
-        onChange={(key) => {
-          setActiveTab(key);
-          setCurrentPage(1);
-        }}
-        items={[
-          { key: "all", label: "ALL POSTS" },
-          { key: "latest", label: "LATEST POSTS" },
-          { key: "archived", label: "ARCHIVED" },
-        ]}
-      />
-      <List
-        dataSource={paginatedPosts}
-        renderItem={(post) => (
-          <BlogItem key={post?.id}>
-            <Thumbnail
-              src={
-                isLoading
-                  ? `https://placehold.co/62x62?text=Loading...`
-                  : post?.imgUrl
-              }
-              loading="lazy"
-              alt="Blog thumbnail"
-            />
-            <BlogContent>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 8,
-                  justifyContent: "space-between",
-                }}
-              >
-                <Title
-                  level={4}
-                  style={{
-                    marginBottom: 8,
-                    cursor: "pointer",
-                  }}
-                  onClick={() => navigate(`/posts/${post.id}`)}
-                >
-                  {post.title}
-                </Title>
-                <span style={{ color: "#999", fontWeight: "normal" }}>
-                  {formattedDate}
-                </span>
-              </div>
-              <Paragraph ellipsis={{ rows: 2 }}>{post.body}</Paragraph>
-              <Space size="small">
-                <Button
-                  style={{ paddingLeft: 0 }}
-                  type="link"
-                  onClick={() => navigate(`/posts/${post.id}`)}
-                >
-                  Read More
-                </Button>
-              </Space>
-              <Space size="small">
-                <Button type="primary" onClick={() => handleEditClick(post)}>
-                  <EditOutlined /> Edit
-                </Button>
-                <Popconfirm
-                  title="Are you sure to delete this blog?"
-                  description={`This action cannot be undone. Are you sure?`}
-                  onConfirm={() => handleOk(post.id)}
-                  open={selectedPostIdForDelete === post.id}
-                  okButtonProps={{ loading: confirmLoading }}
-                  onCancel={handleCancel}
-                >
-                  <Button
-                    type="primary"
-                    danger
-                    onClick={() => showPopconfirm(post.id)}
-                  >
-                    <DeleteOutlined /> Delete
-                  </Button>
-                </Popconfirm>
-              </Space>
-            </BlogContent>
-          </BlogItem>
-        )}
-      />
-      <ConfigProvider
-        theme={{
-          components: {
-            Pagination: {
-              itemActiveBg: "#1a2651",
-            },
-          },
-          token: {
-            colorPrimary: "#fff",
-          },
-        }}
-      >
-        <Pagination
-          align="center"
-          current={currentPage}
-          pageSize={pageSize}
-          total={filteredPosts?.length || 0}
-          onChange={(page) => setCurrentPage(page)}
-          style={{ marginTop: 16 }}
+      <Title style={{ paddingLeft: "1rem" }} level={2}>
+        All Blog posts
+      </Title>
+      <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
+        <Tabs
+          style={{
+            fontWeight: "bold",
+          }}
+          defaultActiveKey="all"
+          onChange={(key) => {
+            setActiveTab(key);
+            setCurrentPage(1);
+          }}
+          items={[
+            { key: "all", label: "ALL POSTS" },
+            { key: "latest", label: "LATEST POSTS" },
+            { key: "archived", label: "ARCHIVED" },
+          ]}
         />
-      </ConfigProvider>
-      <EditPostModal
-        post={selectedPost}
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSuccess={() => {
-          queryClient.invalidateQueries({ queryKey: ["posts"] });
-        }}
-      />
+        <List
+          dataSource={paginatedPosts}
+          renderItem={(post) => (
+            <BlogItem key={post?.id}>
+              <Thumbnail
+                src={
+                  isLoading
+                    ? `https://placehold.co/62x62?text=Loading...`
+                    : post?.imgUrl
+                }
+                loading="lazy"
+                alt="Blog thumbnail"
+              />
+              <BlogContent>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 8,
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Title
+                    level={4}
+                    style={{
+                      marginBottom: 8,
+                      cursor: "pointer",
+                    }}
+                    onClick={() => navigate(`/posts/${post.id}`)}
+                  >
+                    {post.title}
+                  </Title>
+                  <span style={{ color: "#999", fontWeight: "normal" }}>
+                    {formattedDate}
+                  </span>
+                </div>
+                <Paragraph ellipsis={{ rows: 2 }}>{post.body}</Paragraph>
+                <Space size="small">
+                  <Button
+                    style={{ paddingLeft: 0 }}
+                    type="link"
+                    onClick={() => navigate(`/posts/${post.id}`)}
+                  >
+                    Read More
+                  </Button>
+                </Space>
+                <Space size="small">
+                  <Button type="primary" onClick={() => handleEditClick(post)}>
+                    <EditOutlined /> Edit
+                  </Button>
+                  <Popconfirm
+                    title="Are you sure to delete this blog?"
+                    description={`This action cannot be undone. Are you sure?`}
+                    onConfirm={() => handleOk(post.id)}
+                    open={selectedPostIdForDelete === post.id}
+                    okButtonProps={{ loading: confirmLoading }}
+                    onCancel={handleCancel}
+                  >
+                    <Button
+                      type="primary"
+                      danger
+                      onClick={() => showPopconfirm(post.id)}
+                    >
+                      <DeleteOutlined /> Delete
+                    </Button>
+                  </Popconfirm>
+                </Space>
+              </BlogContent>
+            </BlogItem>
+          )}
+        />
+        <ConfigProvider
+          theme={{
+            components: {
+              Pagination: {
+                itemActiveBg: "#1a2651",
+              },
+            },
+            token: {
+              colorPrimary: "#fff",
+            },
+          }}
+        >
+          <Pagination
+            align="center"
+            current={currentPage}
+            pageSize={pageSize}
+            total={filteredPosts?.length || 0}
+            onChange={(page) => setCurrentPage(page)}
+            style={{ marginTop: 16 }}
+          />
+        </ConfigProvider>
+        <EditPostModal
+          post={selectedPost}
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onSuccess={() => {
+            queryClient.invalidateQueries({ queryKey: ["posts"] });
+          }}
+        />
+      </Content>
     </div>
   );
 };

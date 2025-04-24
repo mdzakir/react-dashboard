@@ -8,9 +8,6 @@ import BlogDetail from "./pages/BlogDetail";
 import Blogs from "./pages/Blogs";
 import Dashboard from "./pages/Dashboard";
 
-const { Content } = Layout;
-
-
 const AppWrapper = styled(Layout)`
   height: 100vh;
 `;
@@ -19,17 +16,14 @@ function App() {
   return (
     <AppWrapper>
       <Sidebar />
-      
+
       <MainLayout>
-      
-        <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
-          <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/blogs" element={<Blogs />} />
-            <Route path="/posts/:postId" element={<BlogDetail />} />
-          </Routes>
-        </Content>
+      <Routes>
+          <Route path="/" element={<Navigate to="/blogs" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/blogs" element={<Blogs />} />
+          <Route path="/posts/:postId" element={<BlogDetail />} />
+        </Routes>
       </MainLayout>
     </AppWrapper>
   );

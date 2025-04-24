@@ -40,29 +40,37 @@ const Sidebar = () => {
           backgroundColor: "#397bf6",
         }}
       >
-       {!collapsed ? <Image
-          src={
-            "https://www.qdb.qa/-/media/images/project/qdb/icons/logo-colored.svg"
-          }
-          alt="post image"
-          style={{
-            margin: "auto",
-            height: "62px",
-            width: "100px",
-            paddingLeft: "16px",
-            filter: "brightness(0) invert(1)",
-          }}
-        /> : null }
+        {!collapsed ? (
+          <Image
+            src={
+              "https://www.qdb.qa/-/media/images/project/qdb/icons/logo-colored.svg"
+            }
+            alt="post image"
+            style={{
+              margin: "auto",
+              height: "62px",
+              width: "100px",
+              paddingLeft: "16px",
+              filter: "brightness(0) invert(1)",
+            }}
+          />
+        ) : null}
         <Button
           type="text"
-           data-testid="collapse-button"
-          icon={collapsed ? <MenuUnfoldOutlined color="#fff" /> : <MenuFoldOutlined color="#fff" />}
+          data-testid="collapse-button"
+          icon={
+            collapsed ? (
+              <MenuUnfoldOutlined color="#fff" />
+            ) : (
+              <MenuFoldOutlined color="#fff" />
+            )
+          }
           onClick={() => setCollapsed(!collapsed)}
           style={{
             fontSize: "16px",
             width: 64,
             height: 64,
-            color: '#fff'
+            color: "#fff",
           }}
         />
       </div>
@@ -100,12 +108,18 @@ const Sidebar = () => {
         selectedKeys={[location.pathname]}
         style={{ borderRight: 0 }}
       >
-        <Menu.Item key="/" icon={<AppstoreOutlined />}>
-          <Link to="/">Dashboard</Link>
+        <Menu.Item key="/dashboard" icon={<AppstoreOutlined />}>
+          <Link to="/dashboard">Dashboard</Link>
         </Menu.Item>
         <Menu.SubMenu key="blogs" title="Blogs" icon={<FileTextOutlined />}>
           <Menu.Item key="/blogs">
             <Link to="/blogs">All</Link>
+          </Menu.Item>
+          <Menu.Item key="/blogs?status=latest">
+            <Link to="/blogs?status=latest">Latest</Link>
+          </Menu.Item>
+          <Menu.Item key="/blogs?status=archived">
+            <Link to="/blogs?status=archived">Archived</Link>
           </Menu.Item>
         </Menu.SubMenu>
         <Menu.Item key="docs" icon={<BookOutlined />}>
