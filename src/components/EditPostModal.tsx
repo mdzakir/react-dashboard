@@ -3,7 +3,7 @@ import { Modal, Form, Input, Button } from "antd";
 
 import { useMutation } from "@tanstack/react-query";
 import { UserPost } from "../@types/post";
-import { updatePost } from "../hooks/services/updatePost";
+import { updatePost } from "../hooks/services/postsService";
 
 type Props = {
   post: UserPost | null;

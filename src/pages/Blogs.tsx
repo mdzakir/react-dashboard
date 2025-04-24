@@ -1,13 +1,13 @@
-import { EditOutlined } from "@ant-design/icons";
-import { ConfigProvider, Pagination } from "antd";
-import { useQueryClient } from "@tanstack/react-query";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { ConfigProvider, Pagination, Popconfirm } from "antd";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, List, Space, Spin, Typography } from "antd";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { UserPost } from "../@types/post";
 import EditPostModal from "../components/EditPostModal";
-import { useUserPosts } from "../hooks/services/postsService";
+import { deletePost, useUserPosts } from "../hooks/services/postsService";
 import { formattedDate } from "../utils";
 
 const { Title, Paragraph } = Typography;
@@ -38,6 +38,19 @@ const Blogs: React.FC = () => {
 
   const [selectedPost, setSelectedPost] = useState<UserPost | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedPostIdForDelete, setSelectedPostIdForDelete] = useState<
+    number | null
+  >(null);
+
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
+  const mutation = useMutation({
+    mutationFn: (postId: number) => deletePost(postId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      setSelectedPostIdForDelete(null);
+    },
+  });
 
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 4;
@@ -50,6 +63,25 @@ const Blogs: React.FC = () => {
   const handleEditClick = (post: UserPost) => {
     setSelectedPost(post);
     setModalOpen(true);
+  };
+
+  const showPopconfirm = (postId: number) => {
+    setSelectedPostIdForDelete(postId);
+  };
+
+  const handleOk = (postId: number) => {
+    setConfirmLoading(true);
+    setTimeout(() => {
+      mutation.mutate(postId, {
+        onSettled: () => setConfirmLoading(false),
+      });
+      setSelectedPostIdForDelete(null);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    setSelectedPostIdForDelete(null);
   };
 
   if (isLoading) return <Spin />;
@@ -109,6 +141,22 @@ const Blogs: React.FC = () => {
                 <Button type="primary" onClick={() => handleEditClick(post)}>
                   <EditOutlined /> Edit
                 </Button>
+                <Popconfirm
+                  title="Are you sure to delete this blog?"
+                  description={`This action cannot be undone. Are you sure?`}
+                  onConfirm={() => handleOk(post.id)}
+                  open={selectedPostIdForDelete === post.id}
+                  okButtonProps={{ loading: confirmLoading }}
+                  onCancel={handleCancel}
+                >
+                  <Button
+                    type="primary"
+                    danger
+                    onClick={() => showPopconfirm(post.id)}
+                  >
+                    <DeleteOutlined /> Delete
+                  </Button>
+                </Popconfirm>
               </Space>
             </BlogContent>
           </BlogItem>
